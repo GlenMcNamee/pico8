@@ -1,75 +1,64 @@
 pico-8 cartridge // http://www.pico-8.com
 version 8
 __lua__
+--
+-- city blitz
+-- 2017 glen mcnamee 
+-- glenmcnamee.com
+-- @glenmcnamee
+--
+
 function _init()
-
-
   gamemode = 0;
 		levels={}
 		levels={"london","madrid"}
 end
 
--- update the position based on the player pressing buttons
 function _update()
 			if gamemode == 0 then _intro() end	
 			if gamemode == 1 then _gameloop() end	
-
 end
 
 function _intro()
 	  gamemode = 1
 	  _initgame()
-	  
 end
 
 function _initgame()
 		 lives = 4
-		 level = 0
-		 
+		 level = 0		 
 	  _initlevel()
 end
 
 function _initlevel()
   xpos = 0
   ypos = 48	
-  //h={}
-  //h= {2,2,3,4,5,6,3,5,4,6,2,2,4,2,0}
-  //h[0]=0
   bomb = 0
   playstatus = 0
-  // for x=1,14 do
-  //  h[x] = 2+flr(rnd(6))
-  // print (h.x)
-  //end
-  //h[15]=0  
-   -- create the matrix
-   blocks = 0
-   mp = {} 
-   for i=0,15 do
-   
-   	tr=2+flr(rnd(6))
-    mp[i] = {}
-					mp[i][9] = 22
-					
-    	for j=1,8 do
-    	  mp[i][j] = 0	 
-    	  if i>0 and i<15 then  	
-		      if tr<j then
-		       blocks +=1
-		      	mp[i][j] = 1
-		      end 
-		      if tr==j then
-		       blocks +=1
-		      	mp[i][j] = 2
-		      end 
-	      end
-					 end    	
-   end
-   
-          
-
+  -- create the matrix
+  blocks = 0
+  mp = {} 
+  for i=0,15 do
+  
+  	tr=2+flr(rnd(6))
+   mp[i] = {}
+				mp[i][9] = 22
+				
+   	for j=1,8 do
+   	  mp[i][j] = 0	 
+   	  if i>0 and i<15 then  	
+	      if tr<j then
+	       blocks +=1
+	      	mp[i][j] = 1
+	      end 
+	      if tr==j then
+	       blocks +=1
+	      	mp[i][j] = 2
+	      end 
+      end
+				 end    	
+  end         
 end
-
 
 function _gameloop()
 		_moveplayer()
@@ -78,7 +67,6 @@ function _gameloop()
 end
 
 function _moveplayer()
-		-- move player
 		if playstatus == 0 then
 				xpos += 1
 		end
@@ -88,18 +76,22 @@ function _moveplayer()
 				 ypos = 112 
 				else
 				 ypos += 1
-				 
+				 if (xpos>-9) then
+					 _colusion(xpos+9,ypos)
+					end
+				 if (xpos>1) then
+					 _colusion(xpos+1,ypos)
+					end
 				end
 		end
-
 				
 		if (xpos > 128) then
 			xpos -= 128+16  
 			ypos += 8
 		end
 		
-		if (ypos>56 and xpos>-16 and xpos<128-16) then
-			if _colusion(xpos+16,ypos) then 
+		if (ypos>56 and xpos>-15 and xpos<128-16) then
+			if _colusion(xpos+15,ypos) then 
 				playstatus = 2
 			end
 		end
@@ -110,6 +102,7 @@ function _colusion(tx,ty)
 				ty=flr((ty-48)/8)
 				if (mp[tx][ty] == 1) then
 					mp[tx][ty] = 3
+
 					sfx(0)
 					return true
 				end
@@ -129,16 +122,9 @@ function _movebomb()
 		-- move bomb
 		if (bomb==1) then bomby+=1.3
 		if (bomby>56) then
---  if	_colusion(flr(bombx/8),flr((bomby-48)/8)) then
   if	_colusion(bombx,bomby) then
    bomb = 0
   end
-				--tx = flr(bombx/8)
-				--ty = flr((bomby-48)/8)
-				--print(ty.." "..tx,0,0)
-				--print(mp[tx][ty],0,8)
-
-				
 			end
 		end
 end
@@ -170,79 +156,65 @@ function _drawplayer()
 end
 
 function _drawcity()
+		print ("blocks "..blocks,0,8)
 		--loop for each column
   for x=0,15 do
-  --draw grass
-			--spr (1,x*8,120)
-			--y=h[x]
 			y=x
-			--if x>0 and x<15 then
-				--draw buildings
-				
-				bx = x-1
-				if (bx > 7 ) then bx-=8 end
-						for xx=1,9 do					
-							if mp[y][xx] == 2 then 
-							 --draw roof
-							 spr (18+bx,x*8,48+(xx*8))
-							end
-							if mp[y][xx] == 1 then 
-							 --draw floors
-							 spr (2+bx,x*8,48+(xx*8))
-							end
-							if mp[y][xx] == 22 then
-								spr (1,x*8,48+(xx*8))
-							end
-							if mp[y][xx] == 23 then
-								spr (17,x*8,48+(xx*8))
-							end
-
-							
-							-- explosions
-							if mp[y][xx] >2 and mp[y][xx] <21 then 
-								if mp[y][xx] <12 then
-								 exo = mp[y][xx]-2
-								 fl = 0
-								else
-								 exo = mp[y][xx]-11
-								 fl = 1
-								end
-								if exo < 4 then
-									if fl == 0 then
- 							  spr (2+bx,x*8,48+(xx*8))									
-									else
-									 spr (18+bx,x*8,48+(xx*8))
-									end
-							 end
-							 spr (50+exo,x*8,48+(xx*8))
-							 if exo < 9 then
-							  mp[y][xx] += 1
-							 else
-							 	mp[y][xx] = 0
-							 end
-							end		
-								
-							
-							
-							
+			bx = x-1
+			if (bx > 7 ) then bx-=8 end
+					for xx=1,9 do					
+						if mp[y][xx] == 2 then 
+						 --draw roof
+						 spr (18+bx,x*8,48+(xx*8))
 						end
-						--print (h.x,x*8,0)
-				end						
-		--end
+						if mp[y][xx] == 1 then 
+						 --draw floors
+						 spr (2+bx,x*8,48+(xx*8))
+						end
+						if mp[y][xx] == 22 then
+							spr (1,x*8,48+(xx*8))
+						end
+						if mp[y][xx] == 23 then
+							spr (17,x*8,48+(xx*8))
+						end
+						
+  				-- explosions
+						if mp[y][xx] >2 and mp[y][xx] <21 then 
+							if mp[y][xx] <12 then
+							 exo = mp[y][xx]-2
+							 fl = 0
+							else
+							 exo = mp[y][xx]-11
+							 fl = 1
+							end
+							if exo < 4 then
+								if fl == 0 then
+							  spr (2+bx,x*8,48+(xx*8))									
+								else
+								 spr (18+bx,x*8,48+(xx*8))
+								end
+						 end
+						 spr (50+exo,x*8,48+(xx*8))
+						 if exo < 9 then
+						  mp[y][xx] += 1
+						 else
+						 	mp[y][xx] = 0
+						 	blocks -= 1
+						 	if blocks == 0 
+						 		playstatus = 1
+						 end
+						end		
+					end
+			end						
 end
 
 function _drawbomb()
-  --draw bomb
-		if (bomb==1) then
-			spr (50,bombx,bomby)
-			
-		end
+ if (bomb==1) then
+		spr (50,bombx,bomby)			
+	end
 end	
 
 function hcenter(s)
-	-- string length times the 
-	-- pixels in a char's width
-	-- cut in half and rounded down
 	return 64-flr((#s*4)/2)
 end
 
