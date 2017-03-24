@@ -28,9 +28,9 @@ function _initgame()
 end
 
 function _initlevel()
- _drawlevel() 
- death = 0
- gamemode = 4
+  _drawlevel() 
+  death = 0
+  gamemode = 4
 end
 
 
@@ -48,6 +48,12 @@ function _drawlevel()
   ly = 16
   lx = (dung-8) * 32
  end
+ 
+ ----- 
+
+ 
+ ----- 
+ 
  for y=0, 15 do
   for x=0, 15 do
    mset(x,y,mget(lx+x,ly+y))
@@ -347,7 +353,7 @@ function _draw()
 	  yt += 8
 	 end
 	end
-	if gamemode == 4 then
+	if gamemode > 1 and gamemode <5 then
 	 for y=0,15 do
  	 for x=0,15 do
  	 drw = 0
