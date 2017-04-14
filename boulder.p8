@@ -16,14 +16,22 @@ function _intro()
 end
 
 function _titlescreen() 
- if btnp(4) and time() > last then
-  gamemode = 2
+ if time() > last then
+	 if btnp(4)  then
+	  gamemode = 2
+	 end
+ else
+  level = 1
  end
+  if btnp(0) then level = level - 1 end
+	if btnp(1) then level = level + 1 end
+	if level < 1 then level = 30 end
+	if level > 30 then level = 1 end
 end	
 
 function _initgame()
  diamonds = 00
- level = 1
+ --level = 1
  lives = 3
  gamemode = 3
 end
@@ -360,6 +368,10 @@ function _draw()
 	  print (title[a],(64-(#title[a]*2)),yt)
 	  yt += 8
 	 end
+	 lev1=flr(level/10)
+ 	lev2=level-(lev1*10)
+ 	spr(96+lev1,96,0,1,1)
+ 	spr(96+lev2,104,0,1,1)
 	end
 	if gamemode > 1 and gamemode <5 then
 	 for y=0,15 do
