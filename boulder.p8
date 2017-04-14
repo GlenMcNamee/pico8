@@ -7,7 +7,6 @@ function _init()
  title = {"bouldercraft","by glen mcnamee","","use ”ƒ‹‘ to move", " ", "","","","press — to start"}
  endgame = {"well done","","you've completed","dungeon penetrator","","","sorry it's sucks","i couldn't finish it in time!","","press â€” to continue"}
  anim = 0
- -- added something
 end
 
 function _intro() 	
