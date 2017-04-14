@@ -99,6 +99,7 @@ end
 
 function _endgame() 
  if btnp(4) and time() > last+1 then
+  last = time()
   gamemode = 0
  end
 end	
@@ -112,6 +113,8 @@ function	_maingameloop()
   if death > 100 then 
    lives -= 1
    if lives < 0 then
+    last = time()
+    level = 1
     gamemode = 1 
    else 
     gamemode = 3
@@ -259,6 +262,9 @@ function	_ply()
 	if btnp(1) then nx = px + 1 end
 	if btnp(2) then ny = py - 1 end
 	if btnp(3) then ny = py + 1 end
+	if btnp(5) then 
+	 _exo(px,py)
+	end
 	if mget(nx,ny) == 0 or mget(nx,ny) == 6 then 
   mset(px,py,0)
 	 px = nx
