@@ -108,7 +108,7 @@ function	_maingameloop()
   _ply()
  else 
   death +=1 
-  mset(flr(rnd(16)),flr(rnd(16)),2)
+  mset(flr(rnd(16)),flr(rnd(16)),3)
   if death > 100 then 
    lives -= 1
    if lives < 0 then
@@ -257,25 +257,18 @@ end
 function	_ply() 
  nx = px
  ny = py
- buttonpress = 0
  if btnp(0) then nx = px - 1 end
 	if btnp(1) then nx = px + 1 end
 	if btnp(2) then ny = py - 1 end
 	if btnp(3) then ny = py + 1 end
-	if btn(4) then buttonpress = 1 end
 	if btnp(5) then 
 	 _exo(px,py)
 	end
 	if mget(nx,ny) == 0 or mget(nx,ny) == 6 then 
-		if buttonpress == 0 then
-	  mset(px,py,0)
-		 px = nx
-		 py = ny
-		 mset(nx,ny,1)
-	 else
-	 	mset(nx,ny,0)
-	 
-	 end
+  mset(px,py,0)
+	 px = nx
+	 py = ny
+	 mset(nx,ny,1)
 	end
 
  if mget(nx,ny) == 3 and diamonds >= maxdiamonds  then
@@ -290,15 +283,12 @@ function	_ply()
   --npcx[npc]=-1
  	--npcy[npc]=-1
   npcd[npc]=0
-  if buttonpress == 0 then
-	  mset(px,py,0)
-		 px = nx
-		 py = ny
-		 mset(nx,ny,1)
-		else
-		 mset(nx,ny,0)
-		end
-		diamonds += 1
+  
+  mset(px,py,0)
+	 px = nx
+	 py = ny
+	 mset(nx,ny,1)
+	 diamonds += 1
 	 if diamonds == maxdiamonds then cls(7) end
 	end
 	if mget(nx,ny) == 17 and px!= nx then
