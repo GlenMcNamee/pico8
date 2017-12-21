@@ -151,31 +151,47 @@ end
 --
 
 function _ply()
- nx = px
- ny = py
- if btn(0) then nx = px - 1 end
- if btn(1) then nx = px + 1 end
- if btn(2) then ny = py - 1 end
- if btn(3) then ny = py + 1 end
- if nx < 0 or nx > 15 then nx = px end
- if ny < 0 or ny > 15 then ny = py end
- if mget(nx,ny) == 0 or mget(nx,ny) == 6 then
-  mset(px,py,0)
-  px = nx
-  py = ny
-  mset(nx,ny,37)
+
+ if btn(4) then
+  -- fire button pressed
+  if buld == 0 then
+	  if btn(0) then buld = 1 end
+	  if btn(1) then buld = 2 end
+ 	 if btn(2) then buld = 3 end
+  	if btn(3) then buld = 4 end
+  	if buld != 0 and mget(px+dx[buld],py+dy[buld])==0 then
+    bulx = px + dx[buld]
+    buly = py + dy[buld]
+				mset(bulx,buly,15)
+   end
+  end
+ else
+  -- fire button not pressed
+  nx = px
+  ny = py
+  if btn(0) then nx = px - 1 end
+  if btn(1) then nx = px + 1 end
+  if btn(2) then ny = py - 1 end
+  if btn(3) then ny = py + 1 end
+  if nx < 0 or nx > 15 then nx = px end
+  if ny < 0 or ny > 15 then ny = py end
+  if mget(nx,ny) == 0 or mget(nx,ny) == 6 then
+   mset(px,py,0)
+   px = nx
+   py = ny
+   mset(nx,ny,37)
+  end
+  
+  if mget(nx,ny) == barrel then
+   mset(px,py,0)
+   px = nx
+   py = ny
+   mset(nx,ny,player)
+   barrels += 1
+   if barrels == maxbarrels then cls(7) end
+  end
  end
 
- if mget(nx,ny) == barrel then
-  mset(px,py,0)
-  px = nx
-  py = ny
-  mset(nx,ny,player)
-  barrels += 1
-  if barrels == maxbarrels then cls(7) end
- end
- 
- 
 end
 
 
@@ -195,11 +211,11 @@ function _npc()
   nnx=npcx[npc] 
   nny=npcy[npc]
   if flr(rnd(2))==0 then
-   if npcx[npc] > px then nnx = npcx[npc] - .5 end
-   if npcx[npc] < px then nnx = npcx[npc] + .5 end    
+   if npcx[npc] > px then nnx = npcx[npc] - 1 end
+   if npcx[npc] < px then nnx = npcx[npc] + 1 end    
   else
-   if npcy[npc] > py then nny = npcy[npc] - .5 end
-   if npcy[npc] < py then nny = npcy[npc] + .5 end    
+   if npcy[npc] > py then nny = npcy[npc] - 1 end
+   if npcy[npc] < py then nny = npcy[npc] + 1 end    
   end
   if mget(nnx,nny) == 0 then
    npcx[npc] = nnx
@@ -218,31 +234,21 @@ function _npc()
  for y=0, 15 do
   for x=0, 15 do
    tempmap = mget(x,y)
-   if tempmap > barrier1-1 and tempmap < barrier1+4 then
-   	if tempmap == barrier1+3 then
-   	 mset(x,y,barrier1)
-   	else
-   	 mset(x,y,tempmap+1)
-   	end
-   end
-   
-   if tempmap > barrier2-1 and tempmap < barrier2+4 then
-   	if tempmap == barrier2+3 then
-   	 mset(x,y,barrier2)
-   	else
-   	 mset(x,y,tempmap+1)
-   	end
-   end
-   
-   if tempmap > sport-1 and tempmap < sport+4 then
-   	if tempmap == sport+3 then
-   	 mset(x,y,sport)
-   	else
-   	 mset(x,y,tempmap+1)
-   	end
-   end
+   _anim(x,y,tempmap,barrier1)
+   _anim(x,y,tempmap,barrier2)
+   _anim(x,y,tempmap,sport)
    
   end
+ end
+end
+
+function _anim(x,y,tempmap,anit)
+ if tempmap > anit-1 and tempmap < anit+4 then
+ 	if tempmap == anit+3 then
+ 	 mset(x,y,anit) 
+ 	else
+ 	 mset(x,y,tempmap+1)
+ 	end
  end
 end
 -->8
@@ -250,17 +256,35 @@ end
 -- 
 
 function _bullet()
- mset(bulx,buly,0)
-   
- if mget(bulx+dx[buld+1],buly+dx[buld+1])==0 then 
-  bulx += dx[buld+1]
-  buly += dy[buld+1]
- else
-  bulx = -0
-  buly = -0
+ if buld != 0 then
+  mset(bulx,buly,0)
+  if mget(bulx+dx[buld],buly+dy[buld])==0 then 
+   bulx += dx[buld]
+   buly += dy[buld]
+  else
+   bulx = -1
+   buly = -1
+   buld = 0 
+  end 
+  
+  if bulx < 0 or bulx > 15 or buly < 0 or buly > 15 then 
+   bulx = -1
+   buly = -1
+   buld = 0 
+  end  
+  mset(bulx,buly,15)
+ end
+
+end
+
+
+function _col()
+ if mget(bulx,buly) != 0 and mget(bulx,buly) != 15 then 
+  bulx = -1
+  buly = -1
   buld = 0 
- end 
- mset(bulx,buly,15)
+ end
+
 end
 
 ---
@@ -279,12 +303,15 @@ function _draw()
  end 
  
  if gamemode == 4 then
-  _gui()
+
   map(0,0,0,0,16,16)
+    _gui()
  end
 end
 
 function _gui()
+ print("energy",0,122)
+ print("barrels",100,122)
 end
 
 __gfx__
