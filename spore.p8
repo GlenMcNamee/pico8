@@ -1,9 +1,7 @@
 pico-8 cartridge // http://www.pico-8.com
 version 15
 __lua__
------ spurt
----
----
+-- init 
 
 function _init()
 
@@ -25,33 +23,13 @@ function _init()
  gamemode = 2
  xlimit = 15
  ylimit = 14
- 
+ ani = {barrier1, barrier2, sport ,player,potion}
  
  -- directions
  dx = {-1,1,0,0}
  dy = {0,0,-1,1}
+ 
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 -->8
 -- maingame
 
@@ -146,8 +124,7 @@ function _endgame()
  if btnp(4) and time() > last+1 then
   gamemode = 0
  end
-end   
-
+end  
 -->8
 -- player
 
@@ -219,7 +196,6 @@ function outofbounds(x,y)
   return false
  end
 end
-
 -->8
 -- npc
 
@@ -264,18 +240,13 @@ function _npc()
   end
  end
 
-
 end
 
 function _animmap()
  for y=0, ylimit do
   for x=0, xlimit do
    tempmap = mget(x,y)
-   _anim(x,y,tempmap,barrier1)
-   _anim(x,y,tempmap,barrier2)
-   _anim(x,y,tempmap,sport)
-   _anim(x,y,tempmap,player)
-   _anim(x,y,tempmap,potion) 
+   _newanim(x,y,tempmap)
    if tempmap == 3 then _spawner(x,y) end
   end
  end
@@ -293,13 +264,16 @@ function _spawner(x,y)
  end
 end
 
-function _anim(x,y,tempmap,anit)
- if tempmap > anit-1 and tempmap < anit+4 then
- 	if tempmap == anit+3 then
- 	 mset(x,y,anit) 
- 	else
- 	 mset(x,y,tempmap+1)
- 	end
+function _newanim(x,y,tempmap)
+ for temp=1,5 do
+  anit = ani[temp]
+  if tempmap > anit-1 and tempmap < anit+4 then
+  	if tempmap == anit+3 then
+  	 mset(x,y,anit) 
+  	else
+  	 mset(x,y,tempmap+1)
+  	end
+  end
  end
 end
 
@@ -374,7 +348,6 @@ end
 function _killbul()
  buld = 0 
 end
-
 -->8
 -- draw
 
@@ -397,7 +370,6 @@ function _gui()
  spr(28,54,120)
  print(barrels.."/"..maxbarrels.." barrels",76,122)
 end
-
 __gfx__
 000000000004600027777777277777770000000000777700000cc000277777777777777722444477224444770000000077777777224444776600660000000000
 000000000004600022777777286666670000000007111170000cc000227777777777777722444477724444770000000077777777224444770066006600000000
