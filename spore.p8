@@ -32,6 +32,29 @@ function _init()
  dy = {0,0,-1,1}
 end
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-->8
+-- maingame
+
 function _update()
  if gamemode == 0 then _intro() end   
  if gamemode == 1 then _titlescreen() end   
@@ -71,6 +94,18 @@ function _initlevel()
   buld = 0;
 end
 
+function _maingameloop()
+ if frame == 0 then
+  _ply()
+  _npc()
+  frame = 1
+ else
+  frame = 0
+ end
+ _bullet()
+ _animmap() 
+end
+
 function _drawlevel()
  npc = 0
  maxbarrels = 0 
@@ -91,23 +126,15 @@ function _drawlevel()
    if mget(lx+x,ly+y)==37 then
     px = x
     py = y
-    --mset(x,y,1)
    end
-
-   if mget(lx+x,ly+y)==barrel then maxbarrels += 1 end
-   if mget(lx+x,ly+y)==bullet then
-    bulx = x
-    buly = y
-    buld = 1
-   end
-   
+   -- count barrels
+   if mget(lx+x,ly+y)==barrel then maxbarrels += 1 end   
+   -- set up npc
    if mget(lx+x,ly+y) >= sport and mget(lx+x,ly+y) <= sport+3 then
-  //  if mget(lx+x,ly+y)==18 then maxbarrels += 1 end
     npcx[npc] = x
     npcy[npc] = y
     npcd[npc] = 1 
     npc += 1
-    --mset(lx+x,ly+y,1)
    end
   end
  end
@@ -121,64 +148,8 @@ function _endgame()
  end
 end   
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 -->8
-----
-
-function _maingameloop()
-// if mget(px,py) == player then
- if frame == 0 then
-  _ply()
-  _npc()
-  frame = 1
- else
-  frame = 0
- end
- _bullet()
- _animmap() 
-
- 
-// else
-//  death +=1
-//  mset(flr(rnd(16)),flr(rnd(16)),3)
-//  if death > 100 then
-//   lives -= 1
-//   if lives < 0 then
-//    gamemode = 1
-//   else
-//    gamemode = 3
-//   end
-//  end
-// end
-
-
-end
--->8
---- player
---
---
----
---
---
---
+-- player
 
 function _ply()
  oply = mget(px,py)
@@ -199,11 +170,9 @@ function _ply()
 	  if btn(1) then bdx = 1; buld = 2 end
  	 if btn(2) then bdy = -1; buld = 3 end
   	if btn(3) then bdy = 1; buld = 4 end
-  --	if buld != 0 and mget(px+dx[buld],py+dy[buld])==0 then
    if buld != 0 then
-    bulx = px + bdx//dx[buld]
-    buly = py + bdy//dy[buld]
-		--		mset(bulx,buly,15)
+    bulx = px + bdx
+    buly = py + bdy
    end
   end
  else
@@ -252,13 +221,7 @@ function outofbounds(x,y)
 end
 
 -->8
----- npc
---
--- npcx
--- 
--- npcy
---
-----
+-- npc
 
 function _npc()
  for npc=0, maxnpc-1 do
@@ -281,9 +244,7 @@ function _npc()
    end
    if outofbounds(nnx,npcy[npc]) then nnx = npcx[npc] end
    if outofbounds(npcx[npc],nny) then nny = npcy[npc] end
-
-   
-  
+ 
    if mget(nnx,nny) == 0 then
     npcx[npc] = nnx
     npcy[npc] = nny
@@ -294,7 +255,6 @@ function _npc()
      temp = mget(nnx,nny) 
      if temp == 26 then temp = 0 else temp += 1 end
      mset(nnx,nny,temp)
-     
    end
    if onpc < sport or onpc > sport+3 then
     onpc = sport
@@ -351,18 +311,13 @@ function _findnpc(tx,ty)
  end
 end
 -->8
----- bullet
--- 
+-- bullet
 
 function _bullet()
 
  if buld != 0 then
-//  if mget(bulx-dx[buld],buly-dy[buld])==15 then mset(bulx-dx[buld],buly-dy[buld],0) end 
   if mget(bulx-bdx,buly-bdy)==15 then mset(bulx-bdx,buly-bdy,0) end 
   if outofbounds(bulx,buly) then _killbul() end
-  //if bulx < 0 or bulx > xlimit or buly < 0 or buly > ylimit then 
-  // _killbul() 
-  //end  
  
   -- does something live on this spot?
   test = mget(bulx,buly) 
@@ -400,12 +355,10 @@ function _bullet()
   -- hits npc
   if test >= sport and test <= sport+3 then
    fnpc = _findnpc(bulx,buly)
-   //if fnpc then
-    npcx[fnpc]=-1
-    npcy[fnpc]=-1
-    npcd[fnpc]=0    
-    mset(bulx,buly,0) 
-   //end
+   npcx[fnpc]=-1
+   npcy[fnpc]=-1
+   npcd[fnpc]=0    
+   mset(bulx,buly,0) 
    _killbul()
   end  
  end
@@ -418,30 +371,23 @@ function _bullet()
 
 end
 
-
-
 function _killbul()
  buld = 0 
 end
----
-
----
---
---
 
 -->8
-
+-- draw
 
 function _draw()
 	cls(0)
+ --- draw title screen
  if gamemode == 1 then
-  --- draw title screen
+  --
  end 
- 
- if gamemode == 4 then
-
+ -- draw main gamemode
+ if gamemode == 4 then  
   map(0,0,0,0,16,15)
-    _gui()
+  _gui()
  end
 end
 
@@ -450,16 +396,15 @@ function _gui()
  print(potions,63,122)
  spr(28,54,120)
  print(barrels.."/"..maxbarrels.." barrels",76,122)
-// print(fncp,64,122)
 end
 
 __gfx__
 000000000004600027777777277777770000000000777700000cc000277777777777777722444477224444770000000077777777224444776600660000000000
-000000000004600022777777286666670000000007111170000cc000227777777777777722444477724444770000000077777777224444770066006600080000
-0000000000046000224444772855556700000000017777c000cccc002244444444444477224444444444447700000000444444442244447766006600008e8000
-00000000666666662244447728400567000000000111ccc00cccccc0224444444444447722444444444444770000000044444444224444770066006608e7e800
-000000004444644422444477284005670000000001ccccc00cccc7c02244444444444477224444444444447700000000444444442244447766006600008e8000
-00000000000460002244447728444467000000000111ccc00ccc7cc0224444444444447722444444444444770000000044444444224444770066006600080000
+000000000004600022777777286666670000000007111170000cc000227777777777777722444477724444770000000077777777224444770066006600000000
+0000000000046000224444772855556700000000017777c000cccc002244444444444477224444444444447700000000444444442244447766006600000e0000
+00000000666666662244447728400567000000000111ccc00cccccc0224444444444447722444444444444770000000044444444224444770066006600eae000
+000000004444644422444477284005670000000001ccccc00cccc7c02244444444444477224444444444447700000000444444442244447766006600000e0000
+00000000000460002244447728444467000000000111ccc00ccc7cc0224444444444447722444444444444770000000044444444224444770066006600000000
 000000000004600022222227288888870000000000cccc0000cccc00224444722244447722222222222222270000000022222222224444776600660000000000
 00000000000460002222222222222222000000000000000000000000224444772244447722222222222222220000000022222222224444770066006600000000
 000000500000000000444400cccccccccccccccc00cccccc00cccccc00cccc000000cc000000cc00000000007777777707700000000006000060000000077000
