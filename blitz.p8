@@ -13,52 +13,58 @@ function _init()
 		levels={}
 		levels={"london","madrid"}
 end
+-->8
+--- gameloop
+
+function _intro()
+ gamemode = 1
+ _initgame()
+end
+
+function _initgame()
+ lives = 4
+ level = 0		 
+ _initlevel()
+end
+
+function _initlevel()
+ xpos = 0
+ ypos = 48	
+ bomb = 0
+ playstatus = 0
+ -- create the matrix
+ blocks = 0
+ mp = {} 
+ for i=0,15 do
+ 
+ 	tr=2+flr(rnd(6))
+  mp[i] = {}
+		mp[i][9] = 22
+		
+ 	for j=1,8 do
+   mp[i][j] = 0	 
+   if i>0 and i<15 then  	
+    if tr<j then
+     blocks +=1
+    	mp[i][j] = 1
+    end 
+    if tr==j then
+     blocks +=1
+    	mp[i][j] = 2
+    end 
+   end
+	 end    	
+ end         
+end
+-->8
+-- update
 
 function _update()
 			if gamemode == 0 then _intro() end	
 			if gamemode == 1 then _gameloop() end	
 end
-
-function _intro()
-	  gamemode = 1
-	  _initgame()
-end
-
-function _initgame()
-		 lives = 4
-		 level = 0		 
-	  _initlevel()
-end
-
-function _initlevel()
-  xpos = 0
-  ypos = 48	
-  bomb = 0
-  playstatus = 0
-  -- create the matrix
-  blocks = 0
-  mp = {} 
-  for i=0,15 do
-  
-  	tr=2+flr(rnd(6))
-   mp[i] = {}
-				mp[i][9] = 22
-				
-   	for j=1,8 do
-   	  mp[i][j] = 0	 
-   	  if i>0 and i<15 then  	
-	      if tr<j then
-	       blocks +=1
-	      	mp[i][j] = 1
-	      end 
-	      if tr==j then
-	       blocks +=1
-	      	mp[i][j] = 2
-	      end 
-      end
-				 end    	
-  end         
-end
+-->8
+--
 
 function _gameloop()
 		_moveplayer()
@@ -139,6 +145,8 @@ function _checkcontroller()
 			end
 		end
 end
+-->8
+---draw 
 
 -- clear the screen, then draw a circle at the current position
 function _draw()
@@ -218,9 +226,6 @@ end
 function hcenter(s)
 	return 64-flr((#s*4)/2)
 end
-
-	
-
 __gfx__
 00000000333333337007007077777770707070707777777070707070700700707777777070707070000000000000000000000000004994000000000000000000
 00000000bb3bbb3b7777777070070070707070707707077077777770777777707007007070707070000000000000000000000000049aa9400000000000000000
