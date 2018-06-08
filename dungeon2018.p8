@@ -4,50 +4,50 @@ __lua__
 // init 
 
 function _init()
- // set icons
+ // set sprites
  floor = 1
  wall = 2
  stairs = 3
+ upstairs = 4
  door = 5
  lockeddoor = 7
- upstairs = 4
  fakefloor = 25
+ // init varibles 
  gamestate = 0
- anim = 1
- xlimit = 64
- ylimit = 32
- maxrooms = 20
- name = {"mummy","troll","skeleton","yeti","monster","skull","eye","drop","frogman","duck","rat","cat"}
  wait=0 
+ anim = 1
+ // map size
+ xlimit = 64 // max 128
+ ylimit = 32 // max 32
+ // npc names
+ name = {"mummy","troll","skeleton","yeti","monster","skull","eye","drop","frogman","duck","rat","cat"}
 end
-
-
 -->8
 /// generate map
 
 function _generate_map()
  room = 0
- 
- mpx = {}
- mpy = {}
- mpw = {}
- mph = {}
- while (room < maxrooms) do
-  _createroom(room)
-  room += 1 
+ mpx = {};mpy = {};mpw = {};mph = {}
+
+ while (room < 64) do
+  if _createroom(room) then 
+   room += 1 
+  else 
+   maxrooms = room
+   room = 64
+  end
  end
 
  room = 0 
  while (room < maxrooms) do
-  _expand(room)
-  room += 1 
+  _expand(room); room += 1 
  end
  
- // place obj randomly around 
- // map
+ // place objects randomly  
+ // around map
  _playobjs(10,33) // coins
  _playobjs(5,40) // chests
- _playobjs(2,46) // potions
+ _playobjs(1,46) // potions
  _playobjs(1,37) // food
  _playobjs(1,38) // food
  _playobjs(1,39) // food
@@ -72,12 +72,11 @@ function _generate_map()
  // create paths to rooms (also doors)
  room = 0 
  while (room < maxrooms) do
-  _paths(room)
-  room += 1   
+  _paths(room) ; room += 1   
  end
  
- 	// find rooms with only one door
-	// lock that door
+ // find rooms with only one 
+	// door and lock that door
 	room = 0 
 	keysreq = 0
  while (room < maxrooms) do
@@ -94,14 +93,11 @@ function _generate_map()
   end
   room += 1  
  end
- 
  _playobjs(keysreq,32) // keys
- 
  // starting postion
  x=2+mpx[1]+flr(rnd(mpw[1]-3))
  y=2+mpy[1]+flr(rnd(mph[1]-3))
  mset(x,y,upstairs)
-
  _placenpc()
 end
 
@@ -109,16 +105,22 @@ end
 function _createroom(room)
  // check room width and height
  clear = 0
- 
+ fail = 0
  while (clear == 0) do
   mpx[room] = flr(rnd(xlimit-5))
   mpy[room] = flr(rnd(ylimit-5))
-  mph[room] = 5
-  mpw[room] = 5
+  mph[room] = 5; mpw[room] = 5
   if _roomcheck(room)==true then 
-   clear = 1
-   _fillroom(room)
-   end
+   clear = 1 ; _fillroom(room)
+  else
+   fail += 1 ;
+   if fail > 64 then clear = 2 end
+  end 
+ end
+ if clear == 1 then 
+  return true 
+ else 
+  return false 
  end
 end
 
@@ -137,7 +139,6 @@ function _countdoors(room)
  for y=mpy[room],mpy[room]+mph[room] do
   for x=mpx[room],mpx[room]+mpw[room] do
    if mget(x,y) == door then
-    //mset(x,y,lockeddoor)
     doors+=1 
    end
   end
@@ -217,11 +218,8 @@ function _paths(room)
      end
     end
    end
-  //end
   else
-  //if abs(drr-dr) == 1 then 
    x=mpx[room]+mpw[room]
-
    for y=mpy[room]+1, mpy[room]+mph[room]-1 do
     if check != 1 then
      if mget(x,y-1)==wall and mget(x,y)==wall and mget(x,y+1)==wall then
@@ -283,8 +281,6 @@ end
 
 function _playobjs(nobj,obj)
  for no = 1,nobj do
-  //obj = flr(rnd(32)+32)
-  //obj = flr(rnd(32)+32)
   check = 0
   while check==0 do
    xo = flr(rnd(xlimit))
@@ -300,11 +296,7 @@ function _playobjs(nobj,obj)
    end
   end
  end
- 
 end
-
-
-
 -->8
 
 function _update()
@@ -320,13 +312,17 @@ function _intro()
  wait += 1
  if btnp(4) or wait>70 then 
   gamestate = 10
-  pal(7,7)
+  pal(7,7)  
  end
 end
 
 function _titlescreen()
- if btnp(4) then 
+ if gamestate == 10 then
+  music(0); gamestate=11
+ end
+ if gamestate==11 and btnp(4) then 
   gamestate = 20
+  music(-1, 300)
  end
 end
 
@@ -343,17 +339,13 @@ function _setupgame()
  health = 10
  atk = 2
  basdef = 2
- 
- maxhealth=10
- 
+ maxhealth=10 
  // defence 
  armour = 0
  helmet = 0
  sheild = 0
- 
  // gameset up. 
  level = 1
- 
 end
 
 function _setuplevel()
@@ -412,46 +404,23 @@ function _gloop()
    gamestate=10
   end
 	end	
-	
 end
 
 function _tick_over()
  _npc() 
-
 end
-
-
-
 
 function _mess(mss,lm)
  if lm then lastmess = lm else lastmess = 3 end
- 
  mess = mss
 end
-
-
-
 -->8
 function _draw()
  cls(0)
  gamemode = flr(gamestate/10)
- if gamemode == 0 then
-  _draw_intro()
- end 
- if gamemode == 1 then
-  _draw_title()
- end
-	if gamemode == 3 then
-	 //_draw1() 
-	end 
-	if gamemode == 4 then
-	 _draw1() 
-	end
-	//else 
-  
- 	//_draw1() 
-	//end
-
+ if gamemode == 0 then _draw_intro() end 
+ if gamemode == 1 then _draw_title() end
+	if gamemode == 4 then _draw1() end
 end 
 
 function _draw_intro()
@@ -464,23 +433,16 @@ function _draw_intro()
  if wait>055 and wait<060 then pal(7,13) end
  if wait>060 and wait<065 then pal(7,5) end
  if wait>065 and wait<070 then pal(7,0) end 
-
  spr(135,64-(3.5*8),64-8,8,2)
- 
 end
 
 function _draw_title()
-
-
  spr(160,64-40,30,10,2)
  spr(128,64-(3.5*8),20,7,2)
  print("2018",90,44,13)
- 
  print("by glen mcnamee",64-(15*2),64,7)
  print("for #7drl",64-(9*2),70)
- 
  print("press ❎ to start",30,100)
- 
 end
 
 function _draw1()
@@ -539,15 +501,6 @@ function _drawply()
  end
 end
 
-
-function _draw2()
- for y=0, ylimit-1 do
-  for x=0, xlimit-1 do
-   rect(x*(128/xlimit),y*(128/ylimit),x*(128/xlimit)+128/xlimit,y*(128/ylimit)+128/ylimit,mget(x,y))
-  end
- end
-end 
-
 function _gui()
  color(7)
  guib = 126
@@ -593,10 +546,8 @@ function _gui()
 	// print message
 	if lastmess>0 then 
 	 print(mess,8,121,7) 
-	 
 	end
 end
-
 -->8
 /// player stuff
 
@@ -608,9 +559,10 @@ function _ply()
 	if btnp(1) then nx = x + 1 end
 	if btnp(2) then ny = y - 1 end
 	if btnp(3) then ny = y + 1 end
+	// take potion
 	if btnp(5) and potions > 0 then
 	 health = maxhealth 
-	 potions -= 1
+	 potions -= 1 ; sfx(4)
 	end
  if nx!=x or ny!=y then
   playermoved = 1
@@ -649,10 +601,8 @@ function _ply()
  	 playermoved = 1
  	 _mess("unlocked & opened door")
  	end
-
   if newpos >= 80 and mget(nx,ny) <= 88 then
  	 nme = _find_npc(nx,ny)
-
  	 if nme != false then
  	  att = flr(rnd(atk+weapon))
  	  npc_health[nme] -= att
@@ -669,7 +619,6 @@ function _ply()
     end
  	 end
   end
-
  end
  // pick up stuff
  if btnp(4) then 
@@ -756,11 +705,8 @@ function _ply()
  	if mget(x,y) == 3 then
  		gamestate=41
  		wait = 0
- 	end
- 	
- 	// fight an npc
- 	
- 	 
+ 	end	
+ 	// fight an npc 
 	end
 end	
 	
@@ -780,11 +726,9 @@ function _npc()
    if dir==0 then nx -= 1 end
   	if dir==1 then nx += 1 end
   	if dir==2 then ny -= 1 end
-  	if dir==3 then ny += 1 end
-  	
+  	if dir==3 then ny += 1 end 	
   	if nx==x and ny==y and health > 0 and type < 89 then
   	 att=flr(rnd(npc_att[nnpc]))-flr(rnd(def))
-
   	 if att <= 0 then
   	  _mess("the "..name[type-79].." misses" ) 	 
   	 else
@@ -792,9 +736,7 @@ function _npc()
  	   health -= att
  	  end
 	   sfx(1)	   
-
-   else
-  	
+   else 	
    	if fget(mget(nx,ny),0) == false then
    	 mset(npcx[nnpc],npcy[nnpc],npcold[nnpc])
    	 npcx[nnpc] =nx
@@ -806,10 +748,8 @@ function _npc()
    	 mset(nx,ny,6)
    	end
   	end
-		end
-  
+		end  
  end
-
 end
 
 function _kill_npc(nnpc)
@@ -820,14 +760,12 @@ end
 
 function _find_npc(xx,yy)
  for nnpc = 0,16 do
-   if npcx[nnpc] == xx and npcy[nnpc] == yy then
-    return nnpc
-   end
+  if npcx[nnpc] == xx and npcy[nnpc] == yy then
+   return nnpc
+  end
  end
  return false
 end
-
-
 
 function _placenpc()
  for nnpc = 0,16 do
@@ -1100,3 +1038,23 @@ __sfx__
 00010000000001e3501c3501835016350153501335012350123501135011350113501035000000103500f3500f3500f3500f3501035011350133501535016350173501b3501e3502135022350243502635026350
 000100003b7503115033750191502e75033750211501315035750247502175028750191500b1501b7501a7501d750177501975006150147501375013750107500b1500e15011150151500975019150077501f150
 000100002f3502f3502f3502f350393502f3502f350363502d350343502c350313502a350293502e3502d3502d3502c35029350293502a350303502b350333502d350353502e3503735030350323503935034350
+00010000000001a25024350243501d2501e2502025024450222501e0502425025250252503535029250260502b250354502d250280503a3502f2502e0503a4502f2502f2503c35030250302502f0503025030050
+010f000018050000001b050000001a050000001605000000110500000013050000001605000000110501305018050000001b050000001a0500000016050000001105000000130500000016050000001105013050
+010f00001855000000000000000000000000000000000000000000000000000000000000000000185501a5501b55000000000000000000000000001f55000000000000000000000000001d55000000185501a550
+010f00001b550000001a550000000000000000185500000000000000001b5500000000000000001a550000001b5501a5501855000000000000000000000000001655000000185500000000000000000000000000
+010f00001b5501a550165500000000000000000000000000000000000000000000000000000000165501855011550000000000000000000000000013550000000000000000000000000014550000001355000000
+010f00000f5500000000000000000000000000000000000000000000000c5500000000000000000f5500000011550135501155000000000000000000000000000f55000000115500000000000000000000000000
+010f00000c0430000000000000000c0430000000000000000c0430000000000000000c0430000000000000000c0430000000000000000c0430000000000000000c0430000000000000000c043000000000000000
+010f00000c043000000000000000246150000000000000000c043000000000000000246150000024615000000c043000000000000000246150000000000000000c04300000000000000024615000002461524615
+__music__
+00 05400a44
+00 05420b44
+00 05060b44
+00 05070b44
+00 05080b44
+00 05090b44
+00 06490a44
+00 07460a44
+00 08420a44
+02 09420a44
+
