@@ -11,11 +11,11 @@ function _init()
 	game_state = 0
 	game_substate = 0 
 	space=0
-	player=1
+	ply=1
 	wall=2
 	door=3
-	thickwall=4
-	muck=5
+	brick=4
+	dirt=5
 	boulder=6
 	diamond=7
 	water=8
@@ -65,57 +65,344 @@ end
 function _init_level()
 level = 1
 
-cave_number = cave[level][1]
-milling_time = cave[level][2]
-initial_diamond_value = cave[level][3]
-extra_diamond_value = cave[level][4]
-initial_randomiser_seed_value_for_difficulty_level_1 = cave[level][5]
-initial_randomiser_seed_value_for_difficulty_level_2 = cave[level][6]
-initial_randomiser_seed_value_for_difficulty_level_3 = cave[level][7]
-initial_randomiser_seed_value_for_difficulty_level_4 = cave[level][8]
-initial_randomiser_seed_value_for_difficulty_level_5 = cave[level][9]
-diamonds_needed_on_difficulty_level_1 = cave[level][10]
-diamonds_needed_on_difficulty_level_2 = cave[level][11]
-diamonds_needed_on_difficulty_level_3 = cave[level][12]
-diamonds_needed_on_difficulty_level_4 = cave[level][13]
-diamonds_needed_on_difficulty_level_5 = cave[level][14]
-cave_time_for_difficulty_level_1 = cave[level][15]
-cave_time_for_difficulty_level_2 = cave[level][16]
-cave_time_for_difficulty_level_3 = cave[level][17]
-cave_time_for_difficulty_level_4 = cave[level][18]
-cave_time_for_difficulty_level_5 = cave[level][19]
-background_colour_1 = cave[level][20]
-background_colour_2 = cave[level][21]
-foreground_colour = cave[level][22]
-unused1 = cave[level][23]
-unused2 = cave[level][24]
-random_object_number_1 = cave[level][25]
-random_object_number_2 = cave[level][26]
-random_object_number_3 = cave[level][27]
-random_object_number_4 = cave[level][28]
-probability_of_object_1 = cave[level][29]
-probability_of_object_2 = cave[level][30]
-probability_of_object_3 = cave[level][31]
-probability_of_object_4 = cave[level][32]
-
 	//space: 23%
 	//boulder: 19%
  //diamond: 3%
- srand (cave[level][5])
+
+ level = 1+flr(rnd(15))
+ 
+ rand = 10
+ randobject = {{},{}}
+ randobjectch = {{},{}}
+ randobject[1] = {space,boulder,diamond,0},{}
+ randobject[2] = {space,boulder,diamond,npc1},{}
+ randobject[3] = {brick,boulder,diamond,0},{}
+ randobject[4] = {boulder,0,0,0}
+ randobject[5] = {0,0,0,0}
+ randobject[6] = {boulder,0,0,0}
+ randobject[7] = {space,boulder,npc1,0}
+ randobject[8] = {space,bould,npc,0}
+ randobject[9] = {boulder,diamond,0,0}
+ randobject[10] = {0,0,0,0}
+ randobject[11] = {0,0,0,0}
+ randobject[12] = {space,boulder,diamond,0}
+ randobject[13] = {boulder,0,0,0}
+ randobject[14] = {0,0,0,0}
+ randobject[15] = {space,boulder,npc1,0}
+ randobject[16] = {boulder,0,0,0}   
+
+ 
+ randobjectch[1] = {60,50,9,0}
+ randobjectch[2] = {60,50,9,2}
+ randobjectch[3] = {100,50,9,0}
+ randobjectch[4] = {20,0,0,0}
+ randobjectch[5] = {0,0,0,0} 
+ randobjectch[6] = {10,0,0,0}
+ randobjectch[7] = {100,40,2,0} 
+ randobjectch[8] = {90,50,2,0} 
+ randobjectch[9] = {240,120,0,0} 
+ randobjectch[10] = {0,0,0,0} 
+ randobjectch[11] = {0,0,0,0} 
+ randobjectch[12] = {60,50,9,0} 
+ randobjectch[13] = {40,0,0,0}
+ randobjectch[14] = {0,0,0,0}
+ randobjectch[15] = {100,80,2,0}
+ randobjectch[16] = {50,0,0,0}
+
  for x=0,xlimit do
   for y=0,ylimit do
-  numb = flr(rnd(256))
-  mat = muck
-		if numb>54 then mat=space end
-		if numb>77 then mat=boulder end
-  if numb>96 then mat=diamond end
-  if x==0 or y==0 or x==xlimit or y==ylimit then mat=wall end
-   mset(x+16,y,mat)
+   theobject = dirt
+   numb = flr(rnd(256))
+  	for cavedateindex=1,4 do
+    if (numb < randobjectch[level][cavedateindex]) then theobject= randobject[level][cavedateindex] end
+  	end
+  if x==0 or y==0 or x==xlimit or y==ylimit then theobject=wall end
+		    mset(x+16,y,theobject)
   end
  end
 
+ mset(3+16,4,ply)
+ mset(38+16,18,door)
+ 
+ 
+// cave 1 (// cave a: intro)
+
+_lineof(zbrick,1, 9,30,right)
+_lineof(zbrick,9,16,30,right)
+_storechar(zprfd1,3, 4)
+_storechar(zpreout,38,18)
+
+
+
+// cave 2 (// cave b: rooms)
+
+_lineof(zbrick,1, 8,38,right)
+_lineof(zbrick,1,15,38,right)
+_lineof(zbrick,8, 3,20,down)
+_lineof(zbrick,16, 3,20,down)
+_lineof(zbrick,24, 3,20,down)
+_lineof(zbrick,32, 3,20,down)
+_lineof(zspace,1, 5,38,right)
+_lineof(zspace,1,11,38,right)
+_lineof(zspace,1,18,38,right)
+_lineof(zspace,20, 3,20,down)
+_storechar(zprfd1,18,21)
+_storechar(zpreout,18,22)
+
+// cave 3 (// cave c: maze)
+
+_storechar(zprfd1,3, 4)
+_storechar(zpreout,39,20)
+
+// cave 4 (// cave d: butterflies)
+
+_storechar(zprfd1,1, 3)
+_storechar(zpreout,38,22)
+_filledrect(zdirt,8,10,4,4,zspace)
+_storechar(zbfly1,10,11)
+_filledrect(zdirt,16,10,4,4,zspace)
+_storechar(zbfly1,18,11)
+_filledrect(zdirt,24,10,4,4,zspace)
+_storechar(zbfly1,26,11)
+_filledrect(zdirt,32,10,4,4,zspace)
+_storechar(zbfly1,34,11)
+
+// cave 5 (// cave e: guards)
+
+_storechar(zprfd1,1, 3)
+_storechar(zpreout,39,22)
+_filledrect(zspace,8,10,3,3,zspace)
+_filledrect(zspace,16,10,3,3,zspace)
+_filledrect(zspace,24,10,3,3,zspace)
+_filledrect(zspace,32,10,3,3,zspace)
+_storechar(zdias,9,12)
+_storechar(zffly1,10,10)
+_storechar(zdias,17,12)
+_storechar(zffly1,18,10)
+_storechar(zdias,25,12)
+_storechar(zffly1,26,10)
+_storechar(zdias,33,12)
+_storechar(zffly1,34,10)
+_filledrect(zspace,8,16,3,3,zspace)
+_filledrect(zspace,16,16,3,3,zspace)
+_filledrect(zspace,24,16,3,3,zspace)
+_filledrect(zspace,32,16,3,3,zspace)
+_storechar(zdias,9,18)
+_storechar(zffly1,10,16)
+_storechar(zdias,17,18)
+_storechar(zffly1,18,16)
+_storechar(zdias,25,18)
+_storechar(zffly1,26,16)
+_storechar(zdias,33,18)
+_storechar(zffly1,34,16)
+
+// cave 6 (// cave f: firefly dens)
+
+_filledrect(zbrick,1, 3,10,4,zspace)
+_filledrect(zbrick,1, 6,10,4,zspace)
+_filledrect(zbrick,1, 9,10,4,zspace)
+_filledrect(zbrick,1,12,10,4,zspace)
+_lineof(zdirt,10, 3,13,down)
+_storechar(zdias,3, 5)
+_storechar(zffly1,4, 5)
+_storechar(zdias,3, 8)
+_storechar(zffly1,4, 8)
+_storechar(zdias,3,11)
+_storechar(zffly1,4,11)
+_storechar(zdias,3,14)
+_storechar(zffly1,4,14)
+_filledrect(zbrick,29, 3,10,4,zspace)
+_filledrect(zbrick,29, 6,10,4,zspace)
+_filledrect(zbrick,29, 9,10,4,zspace)
+_filledrect(zbrick,29,12,10,4,zspace)
+_lineof(zdirt,29, 3,13,down)
+_storechar(zdias,36, 5)
+_storechar(zffly1,35, 5)
+_storechar(zdias,36, 8)
+_storechar(zffly1,35, 8)
+_storechar(zdias,36,11)
+_storechar(zffly1,35,11)
+_storechar(zdias,36,14)
+_storechar(zffly1,35,14)
+_storechar(zprfd1,3,20)
+_storechar(zpreout,38,20)
+
+
+// cave 7 (// cave g: amoeba)
+
+_lineof(1, 7,12,right)
+_lineof(28, 5,11,right)
+_lineof(zamoe,19,21,2,right)
+_storechar(zdias,4, 6)
+_storechar(zdias,4,14)
+_storechar(zdias,4,22)
+_storechar(zdias,34, 4)
+_storechar(zdias,34,12)
+_storechar(zdias,34,22)
+_storechar(zprfd1,20, 3)
+_storechar(zpreout,39, 7)
+
+
+// cave 8 (// cave h: enchanted wall)
+
+_storechar(zdias,4, 6)
+_storechar(zdias,34, 4)
+_storechar(zdias,34,12)
+_storechar(zpreout,0, 5)
+_storechar(zprfd1,20, 3)
+_lineof(1, 7,12,right)
+_lineof(1,15,12,right)
+_lineof(28, 5,11,right)
+_lineof(28,13,11,right)
+_lineof(zmagic,14,17,8,right)
+_storechar(zdias,12,16)
+_storechar(zspace,14,18)
+_storechar(zdias,19,18)
+_lineof(zdirt,14,15,8,
+right)
+
+// cave 9 (// cave i: greed)
+
+_filledrect(zbrick,5,10,13,13,zspace)
+_storechar(zdirt,12,10)
+_filledrect(zbrick,25,10,13,13,zspace)
+_storechar(zdirt,31,10)
+_lineof(17,18,9,right)
+_lineof(zspace,17,19,9,right)
+_storechar(zprfd1,7,12)
+_storechar(zpreout,8,12)
+
+// cave (// cave j: tracks)
+
+_storechar(zprfd1,13, 3)
+_storechar(zpreout,39,22)
+_lineof(zdias,5, 4,17,downright)
+_lineof(zdias,21, 4,17,downleft)
+_filledrect(zspace,5,11,17,3,zffly1)
+_rect(zbrick,1, 4,21,17)
+_storechar(zspace,13, 4)
+_rect(zbrick,7, 6,13,13)
+_storechar(zspace,13, 6)
+_rect(zbrick,9, 8,9,9)
+_storechar(zspace,13, 8)
+_rect(zbrick,11,10,5,5)
+_storechar(zspace,13,10)
+_filledrect(zbrick,3, 6,3,15,zffly1)
+_storechar(zspace,4, 6)
+_lineof(zdias,4,16,4,down)
+
+
+// cave (// cave k: crowd)
+
+_lineof(zbrick,10, 3,9,down)
+_lineof(zbrick,20, 3,9,down)
+_lineof(zbrick,30, 3,9,down)
+_lineof(zbrick,9,22,9,up)
+_lineof(zbrick,12,15,17,right)
+_lineof(zbrick,5,11,9,right)
+_lineof(zbrick,15,11,9,right)
+_lineof(zbrick,25,11,9,right)
+_lineof(zbrick,28,19,11,upright)
+_storechar(zdias,4, 3)
+_storechar(zdias,14, 3)
+_storechar(zdias,24, 3)
+_storechar(zdias,34, 3)
+_storechar(zdias,4,22)
+_storechar(zdias,35,21)
+_storechar(zprfd1,20,20)
+_storechar(zpreout,38,17)
+
+
+// cave (// cave l: walls)
+
+_lineof(10, 5,18,down)
+_lineof(14, 5,18,down)
+_lineof(18, 5,18,down)
+_lineof(22, 5,18,down)
+_lineof(2, 6,11,right)
+_lineof(2,10,11,right)
+_lineof(2,14,15,right)
+_lineof(2,18,11,right)
+_filledrect(zdirt,30, 4,4,4,zspace)
+_storechar(zffly1,32, 5)
+_filledrect(zdirt,30, 9,4,4,zspace)
+_storechar(zffly1,32,10)
+_filledrect(zdirt,30,14,4,4,zspace)
+_storechar(zffly1,32,15)
+_storechar(zprfd1,3,20)
+_storechar(zpreout,39,22)
+
+
+// cave (// cave m: apocalypse)
+
+_storechar(zprfd1,18, 3)
+_storechar(zpreout,10, 3)
+_storechar(zamoe,20, 3)
+_lineof(5,18,30,right)
+_lineof(zbfly1,5,19,30,right)
+_lineof(zbous,5,20,30,right)
+_rect(zdirt,5,21,30,2)
+
+
+// cave (// cave n: zigzag)
+
+_filledrect(zdirt,10,10,13,13,zspace)
+_lineof(zbfly1,11,11,12,downright)
+_rect(zdirt,12,10,3,13)
+_rect(zdirt,16,10,3,13)
+_rect(zdirt,20,10,3,13)
+_lineof(zbous,22, 8,12,right)
+_lineof(zffly1,22, 7,12,right)
+_rect(zdirt,23, 6,3,4)
+_rect(zdirt,27, 6,3,4)
+_rect(zdirt,31, 6,3,4)
+_storechar(zprfd1,3, 3)
+_storechar(zpreout,39,20)
+
+// cave (// cave o: funnel)
+
+_lineof(2, 4,10,downright)
+_lineof(15,13,10,upright)
+_lineof(zdirt,12,14,3,right)
+_lineof(zmagic,12,15,3,right)
+_storechar(zpreout,20,22)
+_storechar(zprfd1,20, 3)
+
+
+// cave (// cave p: enchanted boxes)
+
+_storechar(zprfd1,1, 3)
+_storechar(zpreout,39, 4)
+_filledrect(zdirt,8,19,4,4,zspace)
+_storechar(zffly1,10,20)
+_rect(zbrick,7,10,6,8)
+_lineof(zmagic,7,10,6,right)
+_filledrect(zdirt,16,19,4,4,zspace)
+_storechar(zffly1,18,20)
+_rect(zbrick,15,10,6,8)
+_lineof(zmagic,15,10,6,right)
+_filledrect(zdirt,24,19,4,4,zspace)
+_storechar(zffly1,26,20)
+_filledrect(zdirt,32,19,4,4,zspace)
+_storechar(zffly1,34,20)
+
  game_state = 4
+ px =0 
+ py =0
 end
+
+function _storechar(char,x,y)
+end
+
+function _lineof(char,x,y,len,direction)
+end
+
+function _filledrect(char,x,y,len,hein,fill)
+end
+
+function _rect(char,x,y,len,hein,fill)
+end
+
 
 function _level_draw()
 end
@@ -127,7 +414,17 @@ end
 //
 
 function _main_game()
+	if btnp(0) then px = px + 8 end
+	if btnp(1) then px = px - 8 end
+	if btnp(2) then py = py + 8 end
+	if btnp(3) then py = py - 8 end
 end
+
+// ---
+
+
+
+
 -->8
 //
 // player stuff
@@ -161,12 +458,13 @@ end
 
 function _draw()
  cls(0)
- for x=0,xlimit do
-  for y=0,ylimit do
-   pset (x,y,mget(x+16,y))
+ //for x=0,xlimit do
+//  for y=0,ylimit do
+//   pset (x,y,mget(x+16,y))
   	//draw x,y
-  end
- end
+ // end
+ //end
+ map(16,0, px,py)
 end
 
 function _gui()
