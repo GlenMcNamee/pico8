@@ -21,8 +21,8 @@ function _init()
 	water=8
 	npc1=9
 	npc2=10
-	xlimit=40
-	ylimit=22
+	xlimit=39
+	ylimit=21
  cave = {{},{}}
 	cave[1] = {0x01, 0x14, 0x0a, 0x0f, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0c, 0x0c, 0x0c, 0x0c, 0x0c, 0x96, 0x6e, 0x46, 0x28, 0x1e, 0x08, 0x0b, 0x09, 0xd4, 0x20, 0x00, 0x10, 0x14, 0x00, 0x3c, 0x32, 0x09, 0x00, 0x42, 0x01, 0x09, 0x1e, 0x02, 0x42, 0x09, 0x10, 0x1e, 0x02, 0x25, 0x03, 0x04, 0x04, 0x26, 0x12, 0xff},
 	{}
@@ -60,16 +60,17 @@ end
 
 function _init_game()
  game_state = 3
+ level = 1 // +flr(rnd(15))
 end
 
 function _init_level()
-level = 1
+
 
 	//space: 23%
 	//boulder: 19%
  //diamond: 3%
 
- level = 1+flr(rnd(15))
+ 
  
  rand = 10
  randobject = {{},{}}
@@ -121,286 +122,319 @@ level = 1
   end
  end
 
- mset(3+16,4,ply)
- mset(38+16,18,door)
+
+ if level == 1 then // cave a: intro)
+  _lineof(brick,1, 9,30,"right")
+  _lineof(brick,9,16,30,"right")
+  _storechar(ply,3, 4)
+  _storechar(door,38,18)
+ end
  
- 
-// cave 1 (// cave a: intro)
+ // cave 2 (// cave b: rooms)
+ if level == 2 then
+  _lineof(brick,1, 8,38,"right")
+  _lineof(brick,1,15,38,"right")
+  _lineof(brick,8, 3,20,"down")
+  _lineof(brick,16, 3,20,"down")
+  _lineof(brick,24, 3,20,"down")
+  _lineof(brick,32, 3,20,"down")
+  _lineof(space,1, 5,38,"right")
+  _lineof(space,1,11,38,"right")
+  _lineof(space,1,18,38,"right")
+  _lineof(space,20, 3,20,"down")
+  _storechar(ply,18,21)
+  _storechar(door,18,22)
+ end
 
-_lineof(zbrick,1, 9,30,right)
-_lineof(zbrick,9,16,30,right)
-_storechar(zprfd1,3, 4)
-_storechar(zpreout,38,18)
-
-
-
-// cave 2 (// cave b: rooms)
-
-_lineof(zbrick,1, 8,38,right)
-_lineof(zbrick,1,15,38,right)
-_lineof(zbrick,8, 3,20,down)
-_lineof(zbrick,16, 3,20,down)
-_lineof(zbrick,24, 3,20,down)
-_lineof(zbrick,32, 3,20,down)
-_lineof(zspace,1, 5,38,right)
-_lineof(zspace,1,11,38,right)
-_lineof(zspace,1,18,38,right)
-_lineof(zspace,20, 3,20,down)
-_storechar(zprfd1,18,21)
-_storechar(zpreout,18,22)
 
 // cave 3 (// cave c: maze)
-
-_storechar(zprfd1,3, 4)
-_storechar(zpreout,39,20)
+ if level == 3 then
+  _storechar(ply,3, 4)
+  _storechar(door,39,20)
+ end
 
 // cave 4 (// cave d: butterflies)
+ if level == 4 then
+ _storechar(ply,1, 3)
+ _storechar(door,38,22)
+ _filledrect(dirt,8,10,4,4,space)
+ _storechar(npc1,10,11)
+ _filledrect(dirt,16,10,4,4,space)
+ _storechar(npc1,18,11)
+ _filledrect(dirt,24,10,4,4,space)
+ _storechar(npc1,26,11)
+ _filledrect(dirt,32,10,4,4,space)
+ _storechar(npc1,34,11)
+ end
+ 
+ // cave 5 (// cave e: guards)
+ if level == 5 then
+ _storechar(ply,1, 3)
+ _storechar(door,39,22)
+ _filledrect(space,8,10,3,3,space)
+ _filledrect(space,16,10,3,3,space)
+ _filledrect(space,24,10,3,3,space)
+ _filledrect(space,32,10,3,3,space)
+ _storechar(diamond,9,12)
+ _storechar(npc2,10,10)
+ _storechar(diamond,17,12)
+ _storechar(npc2,18,10)
+ _storechar(diamond,25,12)
+ _storechar(npc2,26,10)
+ _storechar(diamond,33,12)
+ _storechar(npc2,34,10)
+ _filledrect(space,8,16,3,3,space)
+ _filledrect(space,16,16,3,3,space)
+ _filledrect(space,24,16,3,3,space)
+ _filledrect(space,32,16,3,3,space)
+ _storechar(diamond,9,18)
+ _storechar(npc2,10,16)
+ _storechar(diamond,17,18)
+ _storechar(npc2,18,16)
+ _storechar(diamond,25,18)
+ _storechar(npc2,26,16)
+ _storechar(diamond,33,18)
+ _storechar(npc2,34,16)
+ end
+ 
+ // cave 6 (// cave f: firefly dens)
+ if level == 6 then
+ _filledrect(brick,1, 3,10,4,space)
+ _filledrect(brick,1, 6,10,4,space)
+ _filledrect(brick,1, 9,10,4,space)
+ _filledrect(brick,1,12,10,4,space)
+ _lineof(dirt,10, 3,13,"down")
+ _storechar(diamond,3, 5)
+ _storechar(npc2,4, 5)
+ _storechar(diamond,3, 8)
+ _storechar(npc2,4, 8)
+ _storechar(diamond,3,11)
+ _storechar(npc2,4,11)
+ _storechar(diamond,3,14)
+ _storechar(npc2,4,14)
+ _filledrect(brick,29, 3,10,4,space)
+ _filledrect(brick,29, 6,10,4,space)
+ _filledrect(brick,29, 9,10,4,space)
+ _filledrect(brick,29,12,10,4,space)
+ _lineof(dirt,29, 3,13,"down")
+ _storechar(diamond,36, 5)
+ _storechar(npc2,35, 5)
+ _storechar(diamond,36, 8)
+ _storechar(npc2,35, 8)
+ _storechar(diamond,36,11)
+ _storechar(npc2,35,11)
+ _storechar(diamond,36,14)
+ _storechar(npc2,35,14)
+ _storechar(ply,3,20)
+ _storechar(door,38,20)
+ end
 
-_storechar(zprfd1,1, 3)
-_storechar(zpreout,38,22)
-_filledrect(zdirt,8,10,4,4,zspace)
-_storechar(zbfly1,10,11)
-_filledrect(zdirt,16,10,4,4,zspace)
-_storechar(zbfly1,18,11)
-_filledrect(zdirt,24,10,4,4,zspace)
-_storechar(zbfly1,26,11)
-_filledrect(zdirt,32,10,4,4,zspace)
-_storechar(zbfly1,34,11)
+ // cave 7 (// cave g: amoeba)
+ if level == 7 then
+ _lineof(1, 7,12,"right")
+ _lineof(28, 5,11,"right")
+ _lineof(water,19,21,2,"right")
+ _storechar(diamond,4, 6)
+ _storechar(diamond,4,14)
+ _storechar(diamond,4,22)
+ _storechar(diamond,34, 4)
+ _storechar(diamond,34,12)
+ _storechar(diamond,34,22)
+ _storechar(ply,20, 3)
+ _storechar(door,39, 7)
+ end
 
-// cave 5 (// cave e: guards)
+ // cave 8 (// cave h: enchanted wall)
+ if level == 8 then
+ _storechar(diamond,4, 6)
+ _storechar(diamond,34, 4)
+ _storechar(diamond,34,12)
+ _storechar(door,0, 5)
+ _storechar(ply,20, 3)
+ _lineof(1, 7,12,"right")
+ _lineof(1,15,12,"right")
+ _lineof(28, 5,11,"right")
+ _lineof(28,13,11,"right")
+ //_lineof(zmagic,14,17,8,"right")
+ _storechar(diamond,12,16)
+ _storechar(space,14,18)
+ _storechar(diamond,19,18)
+ _lineof(dirt,14,15,8,"right")
+ end
+ 
+ // cave 9 (// cave i: greed)
+ if level == 9 then
+ _filledrect(brick,5,10,13,13,space)
+ _storechar(dirt,12,10)
+ _filledrect(brick,25,10,13,13,space)
+ _storechar(dirt,31,10)
+ _lineof(17,18,9,"right")
+ _lineof(space,17,19,9,"right")
+ _storechar(ply,7,12)
+ _storechar(door,8,12)
+ end
+ 
+ // cave (// cave j: tracks)
+ if level == 10 then
+ _storechar(ply,13, 3)
+ _storechar(door,39,22)
+ _lineof(diamond,5, 4,17,downright)
+ _lineof(diamond,21, 4,17,downleft)
+ _filledrect(space,5,11,17,3,npc2)
+ _rect(brick,1, 4,21,17)
+ _storechar(space,13, 4)
+ _rect(brick,7, 6,13,13)
+ _storechar(space,13, 6)
+ _rect(brick,9, 8,9,9)
+ _storechar(space,13, 8)
+ _rect(brick,11,10,5,5)
+ _storechar(space,13,10)
+ _filledrect(brick,3, 6,3,15,npc2)
+ _storechar(space,4, 6)
+ _lineof(diamond,4,16,4,"down")
+ end
 
-_storechar(zprfd1,1, 3)
-_storechar(zpreout,39,22)
-_filledrect(zspace,8,10,3,3,zspace)
-_filledrect(zspace,16,10,3,3,zspace)
-_filledrect(zspace,24,10,3,3,zspace)
-_filledrect(zspace,32,10,3,3,zspace)
-_storechar(zdias,9,12)
-_storechar(zffly1,10,10)
-_storechar(zdias,17,12)
-_storechar(zffly1,18,10)
-_storechar(zdias,25,12)
-_storechar(zffly1,26,10)
-_storechar(zdias,33,12)
-_storechar(zffly1,34,10)
-_filledrect(zspace,8,16,3,3,zspace)
-_filledrect(zspace,16,16,3,3,zspace)
-_filledrect(zspace,24,16,3,3,zspace)
-_filledrect(zspace,32,16,3,3,zspace)
-_storechar(zdias,9,18)
-_storechar(zffly1,10,16)
-_storechar(zdias,17,18)
-_storechar(zffly1,18,16)
-_storechar(zdias,25,18)
-_storechar(zffly1,26,16)
-_storechar(zdias,33,18)
-_storechar(zffly1,34,16)
+ // cave (// cave k: crowd)
+ if level == 11 then
+ _lineof(brick,10, 3,9,"down")
+ _lineof(brick,20, 3,9,"down")
+ _lineof(brick,30, 3,9,"down")
+ _lineof(brick,9,22,9,"up")
+ _lineof(brick,12,15,17,"right")
+ _lineof(brick,5,11,9,"right")
+ _lineof(brick,15,11,9,"right")
+ _lineof(brick,25,11,9,"right")
+ // _lineof(brick,28,19,11,"upright")
+ _storechar(diamond,4, 3)
+ _storechar(diamond,14, 3)
+ _storechar(diamond,24, 3)
+ _storechar(diamond,34, 3)
+ _storechar(diamond,4,22)
+ _storechar(diamond,35,21)
+ _storechar(ply,20,20)
+ _storechar(door,38,17)
+ end
 
-// cave 6 (// cave f: firefly dens)
+ // cave (// cave l: walls)
+ if level == 12 then
+ _lineof(10, 5,18,"down")
+ _lineof(14, 5,18,"down")
+ _lineof(18, 5,18,"down")
+ _lineof(22, 5,18,"down")
+ _lineof(2, 6,11,"right")
+ _lineof(2,10,11,"right")
+ _lineof(2,14,15,"right")
+ _lineof(2,18,11,"right")
+ _filledrect(dirt,30, 4,4,4,space)
+ _storechar(npc2,32, 5)
+ _filledrect(dirt,30, 9,4,4,space)
+ _storechar(npc2,32,10)
+ _filledrect(dirt,30,14,4,4,space)
+ _storechar(npc2,32,15)
+ _storechar(ply,3,20)
+ _storechar(door,39,22)
+ end
 
-_filledrect(zbrick,1, 3,10,4,zspace)
-_filledrect(zbrick,1, 6,10,4,zspace)
-_filledrect(zbrick,1, 9,10,4,zspace)
-_filledrect(zbrick,1,12,10,4,zspace)
-_lineof(zdirt,10, 3,13,down)
-_storechar(zdias,3, 5)
-_storechar(zffly1,4, 5)
-_storechar(zdias,3, 8)
-_storechar(zffly1,4, 8)
-_storechar(zdias,3,11)
-_storechar(zffly1,4,11)
-_storechar(zdias,3,14)
-_storechar(zffly1,4,14)
-_filledrect(zbrick,29, 3,10,4,zspace)
-_filledrect(zbrick,29, 6,10,4,zspace)
-_filledrect(zbrick,29, 9,10,4,zspace)
-_filledrect(zbrick,29,12,10,4,zspace)
-_lineof(zdirt,29, 3,13,down)
-_storechar(zdias,36, 5)
-_storechar(zffly1,35, 5)
-_storechar(zdias,36, 8)
-_storechar(zffly1,35, 8)
-_storechar(zdias,36,11)
-_storechar(zffly1,35,11)
-_storechar(zdias,36,14)
-_storechar(zffly1,35,14)
-_storechar(zprfd1,3,20)
-_storechar(zpreout,38,20)
-
-
-// cave 7 (// cave g: amoeba)
-
-_lineof(1, 7,12,right)
-_lineof(28, 5,11,right)
-_lineof(zamoe,19,21,2,right)
-_storechar(zdias,4, 6)
-_storechar(zdias,4,14)
-_storechar(zdias,4,22)
-_storechar(zdias,34, 4)
-_storechar(zdias,34,12)
-_storechar(zdias,34,22)
-_storechar(zprfd1,20, 3)
-_storechar(zpreout,39, 7)
-
-
-// cave 8 (// cave h: enchanted wall)
-
-_storechar(zdias,4, 6)
-_storechar(zdias,34, 4)
-_storechar(zdias,34,12)
-_storechar(zpreout,0, 5)
-_storechar(zprfd1,20, 3)
-_lineof(1, 7,12,right)
-_lineof(1,15,12,right)
-_lineof(28, 5,11,right)
-_lineof(28,13,11,right)
-_lineof(zmagic,14,17,8,right)
-_storechar(zdias,12,16)
-_storechar(zspace,14,18)
-_storechar(zdias,19,18)
-_lineof(zdirt,14,15,8,
-right)
-
-// cave 9 (// cave i: greed)
-
-_filledrect(zbrick,5,10,13,13,zspace)
-_storechar(zdirt,12,10)
-_filledrect(zbrick,25,10,13,13,zspace)
-_storechar(zdirt,31,10)
-_lineof(17,18,9,right)
-_lineof(zspace,17,19,9,right)
-_storechar(zprfd1,7,12)
-_storechar(zpreout,8,12)
-
-// cave (// cave j: tracks)
-
-_storechar(zprfd1,13, 3)
-_storechar(zpreout,39,22)
-_lineof(zdias,5, 4,17,downright)
-_lineof(zdias,21, 4,17,downleft)
-_filledrect(zspace,5,11,17,3,zffly1)
-_rect(zbrick,1, 4,21,17)
-_storechar(zspace,13, 4)
-_rect(zbrick,7, 6,13,13)
-_storechar(zspace,13, 6)
-_rect(zbrick,9, 8,9,9)
-_storechar(zspace,13, 8)
-_rect(zbrick,11,10,5,5)
-_storechar(zspace,13,10)
-_filledrect(zbrick,3, 6,3,15,zffly1)
-_storechar(zspace,4, 6)
-_lineof(zdias,4,16,4,down)
-
-
-// cave (// cave k: crowd)
-
-_lineof(zbrick,10, 3,9,down)
-_lineof(zbrick,20, 3,9,down)
-_lineof(zbrick,30, 3,9,down)
-_lineof(zbrick,9,22,9,up)
-_lineof(zbrick,12,15,17,right)
-_lineof(zbrick,5,11,9,right)
-_lineof(zbrick,15,11,9,right)
-_lineof(zbrick,25,11,9,right)
-_lineof(zbrick,28,19,11,upright)
-_storechar(zdias,4, 3)
-_storechar(zdias,14, 3)
-_storechar(zdias,24, 3)
-_storechar(zdias,34, 3)
-_storechar(zdias,4,22)
-_storechar(zdias,35,21)
-_storechar(zprfd1,20,20)
-_storechar(zpreout,38,17)
-
-
-// cave (// cave l: walls)
-
-_lineof(10, 5,18,down)
-_lineof(14, 5,18,down)
-_lineof(18, 5,18,down)
-_lineof(22, 5,18,down)
-_lineof(2, 6,11,right)
-_lineof(2,10,11,right)
-_lineof(2,14,15,right)
-_lineof(2,18,11,right)
-_filledrect(zdirt,30, 4,4,4,zspace)
-_storechar(zffly1,32, 5)
-_filledrect(zdirt,30, 9,4,4,zspace)
-_storechar(zffly1,32,10)
-_filledrect(zdirt,30,14,4,4,zspace)
-_storechar(zffly1,32,15)
-_storechar(zprfd1,3,20)
-_storechar(zpreout,39,22)
-
-
-// cave (// cave m: apocalypse)
-
-_storechar(zprfd1,18, 3)
-_storechar(zpreout,10, 3)
-_storechar(zamoe,20, 3)
-_lineof(5,18,30,right)
-_lineof(zbfly1,5,19,30,right)
-_lineof(zbous,5,20,30,right)
-_rect(zdirt,5,21,30,2)
-
+ // cave (// cave m: apocalypse)
+ if level == 13 then
+ _storechar(ply,18, 3)
+ _storechar(door,10, 3)
+ _storechar(water,20, 3)
+ _lineof(5,18,30,"right")
+ _lineof(npc1,5,19,30,"right")
+ _lineof(boulder,5,20,30,"right")
+ _rect(dirt,5,21,30,2)
+ end
 
 // cave (// cave n: zigzag)
+ if level == 14 then
+ _filledrect(dirt,10,10,13,13,space)
+ _lineof(npc1,11,11,12,downright)
+ _rect(dirt,12,10,3,13)
+ _rect(dirt,16,10,3,13)
+ _rect(dirt,20,10,3,13)
+ _lineof(boulder,22, 8,12,"right")
+ _lineof(npc2,22, 7,12,"right")
+ _rect(dirt,23, 6,3,4)
+ _rect(dirt,27, 6,3,4)
+ _rect(dirt,31, 6,3,4)
+ _storechar(ply,3, 3)
+ _storechar(door,39,20)
+ end
+ 
+ // cave (// cave o: funnel)
+ if level == 15 then
+ _lineof(2, 4,10,downright)
+ _lineof(15,13,10,upright)
+ _lineof(dirt,12,14,3,"right")
+ //_lineof(zmagic,12,15,3,"right")
+ _storechar(door,20,22)
+ _storechar(ply,20, 3)
+ end
 
-_filledrect(zdirt,10,10,13,13,zspace)
-_lineof(zbfly1,11,11,12,downright)
-_rect(zdirt,12,10,3,13)
-_rect(zdirt,16,10,3,13)
-_rect(zdirt,20,10,3,13)
-_lineof(zbous,22, 8,12,right)
-_lineof(zffly1,22, 7,12,right)
-_rect(zdirt,23, 6,3,4)
-_rect(zdirt,27, 6,3,4)
-_rect(zdirt,31, 6,3,4)
-_storechar(zprfd1,3, 3)
-_storechar(zpreout,39,20)
-
-// cave (// cave o: funnel)
-
-_lineof(2, 4,10,downright)
-_lineof(15,13,10,upright)
-_lineof(zdirt,12,14,3,right)
-_lineof(zmagic,12,15,3,right)
-_storechar(zpreout,20,22)
-_storechar(zprfd1,20, 3)
-
-
-// cave (// cave p: enchanted boxes)
-
-_storechar(zprfd1,1, 3)
-_storechar(zpreout,39, 4)
-_filledrect(zdirt,8,19,4,4,zspace)
-_storechar(zffly1,10,20)
-_rect(zbrick,7,10,6,8)
-_lineof(zmagic,7,10,6,right)
-_filledrect(zdirt,16,19,4,4,zspace)
-_storechar(zffly1,18,20)
-_rect(zbrick,15,10,6,8)
-_lineof(zmagic,15,10,6,right)
-_filledrect(zdirt,24,19,4,4,zspace)
-_storechar(zffly1,26,20)
-_filledrect(zdirt,32,19,4,4,zspace)
-_storechar(zffly1,34,20)
+ // cave (// cave p: enchanted boxes)
+ if level == 16 then
+ _storechar(ply,1, 3)
+ _storechar(door,39, 4)
+ _filledrect(dirt,8,19,4,4,space)
+ _storechar(npc2,10,20)
+ _rect(brick,7,10,6,8)
+ //_lineof(zmagic,7,10,6,"right")
+ _filledrect(dirt,16,19,4,4,space)
+ _storechar(npc2,18,20)
+ _rect(brick,15,10,6,8)
+ //_lineof(zmagic,15,10,6,"right")
+ _filledrect(dirt,24,19,4,4,space)
+ _storechar(npc2,26,20)
+ _filledrect(dirt,32,19,4,4,space)
+ _storechar(npc2,34,20)
+ end
 
  game_state = 4
  px =0 
  py =0
 end
 
-function _storechar(char,x,y)
+function _storechar(char,x1,y1)
+ mset(x1+16,y1-2,char)
 end
 
-function _lineof(char,x,y,len,direction)
+function _lineof(char,x1,y1,len,direction)
+ if direction=="right" then
+  x2=x1+len-1
+  y2=y1
+ end
+ if direction=="down" then
+  x2=x1
+  y2=y1+len-1
+ end
+ for tx=x1,x2 do
+  for ty=y1,y2 do
+   mset (tx+16,ty-2,char)
+  end
+ end
 end
 
-function _filledrect(char,x,y,len,hein,fill)
+function _filledrect(char,x1,y1,x2,y2,fill)
+ for tx=x1,x1+x2-1 do
+  for ty=y1,y1+y2-1 do
+   theobject = fill
+   if tx==x1 or tx==x1+x2-1 or ty==y1 or ty==y1+y2-1 then theobject = char end
+   mset (tx+16,ty-2,theobject)
+  end
+ end
+
 end
 
-function _rect(char,x,y,len,hein,fill)
+function _rect(char,x1,y1,x2,y2)
+ for tx=x1,x1+x2-1 do
+  for ty=y1,y1+y2-1 do
+   theobject = char
+   if tx==x1 or tx==x1+x2-1 or ty==y1 or ty==y1+y2-1 then
+   mset (tx+16,ty-2,theobject)
+   end
+  end
+ end
 end
 
 
@@ -418,6 +452,14 @@ function _main_game()
 	if btnp(1) then px = px - 8 end
 	if btnp(2) then py = py + 8 end
 	if btnp(3) then py = py - 8 end
+	if btnp(4) then 
+ 	level = level +1 
+ 	game_state = 3
+	end
+	if btnp(5) then 
+ 	level = level -1 
+ 	game_state = 3
+	end
 end
 
 // ---
